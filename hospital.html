@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Management System</title>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+        }
+
+        header {
+            background: #087f8c;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            margin: 25px auto;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        .card h2 {
+            color: #087f8c;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        input, select {
+            padding: 12px;
+            margin: 8px 5px 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 11px 16px;
+            background: #087f8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #055d66;
+        }
+
+        .delete {
+            background: #dc3545;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #087f8c;
+            color: white;
+        }
+
+        @media(max-width: 600px) {
+            .container {
+                width: 95%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+
+function App() {
+
+    const [patients, setPatients] = React.useState([]);
+    const [name, setName] = React.useState("");
+    const [age, setAge] = React.useState("");
+    const [gender, setGender] = React.useState("Male");
+    const [disease, setDisease] = React.useState("");
+    const [doctor, setDoctor] = React.useState("Dr. Ravi");
+    const [search, setSearch] = React.useState("");
+
+    const doctors = [
+        "Dr. Ravi",
+        "Dr. Priya",
+        "Dr. Kumar",
+        "Dr. Anjali"
+    ];
+
+    function addPatient(e) {
+        e.preventDefault();
+
+        if (!name.trim() || !age || !disease.trim()) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        const patient = {
+            id: Date.now(),
+            name,
+            age,
+            gender,
+            disease,
+            doctor
+        };
+
+        setPatients([...patients, patient]);
+
+        setName("");
+        setAge("");
+        setDisease("");
+
+        alert("Patient Registered Successfully!");
+    }
+
+    function deletePatient(id) {
+        setPatients(patients.filter(p => p.id !== id));
+    }
+
+    const filteredPatients = patients.filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return (
+        <div>
+
+            <header>
+                <h1>🏥 Hospital Management System</h1>
+                <p>Patient and Appointment Management</p>
+            </header>
+
+            <div className="container">
+
+                <div className="cards">
+
+                    <div className="card">
+                        <h3>Total Patients</h3>
+                        <h2>{patients.length}</h2>
+                    </div>
+
+                    <div className="card">
+                        <h3>Total Doctors</h3>
+                        <h2>{doctors.length}</h2>
+                    </div>
+
+                    <div className="card">
+                        <h3>Appointments</h3>
+                        <h2>{patients.length}</h2>
+                    </div>
+
+                </div>
+
+                <div className="section">
+
+                    <h2>Patient Registration</h2>
+
+                    <form onSubmit={addPatient}>
+
+                        <input
+                            type="text"
+                            placeholder="Patient Name"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                        />
+
+                        <input
+                            type="number"
+                            placeholder="Age"
+                            min="1"
+                            max="120"
+                            value={age}
+                            onChange={e => setAge(e.target.value)}
+                        />
+
+                        <select
+                            value={gender}
+                            onChange={e => setGender(e.target.value)}
+                        >
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+
+                        <input
+                            type="text"
+                            placeholder="Disease"
+                            value={disease}
+                            onChange={e => setDisease(e.target.value)}
+                        />
+
+                        <select
+                            value={doctor}
+                            onChange={e => setDoctor(e.target.value)}
+                        >
+                            {doctors.map((d, i) => (
+                                <option key={i}>{d}</option>
+                            ))}
+                        </select>
+
+                        <br />
+
+                        <button type="submit">
+                            Register Patient
+                        </button>
+
+                    </form>
+
+                </div>
+
+                <div className="section">
+
+                    <h2>Patient Records</h2>
+
+                    <input
+                        type="text"
+                        placeholder="Search Patient"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                    />
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Disease</th>
+                                <th>Doctor</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {filteredPatients.map(p => (
+
+                                <tr key={p.id}>
+                                    <td>{p.id.toString().slice(-5)}</td>
+                                    <td>{p.name}</td>
+                                    <td>{p.age}</td>
+                                    <td>{p.gender}</td>
+                                    <td>{p.disease}</td>
+                                    <td>{p.doctor}</td>
+
+                                    <td>
+                                        <button
+                                            className="delete"
+                                            onClick={() => deletePatient(p.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+
+                            ))}
+
+                            {filteredPatients.length === 0 && (
+                                <tr>
+                                    <td colSpan="7">
+                                        No Patient Records Found
+                                    </td>
+                                </tr>
+                            )}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+    );
+}
+
+ReactDOM.createRoot(
+    document.getElementById("root")
+).render(<App />);
+
+</script>
+
+</body>
+</html>
